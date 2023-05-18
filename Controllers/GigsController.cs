@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APIWebApp.Models;
+using APIWebApp.ModelsDTO;
+using Microsoft.Identity.Client;
+using APIWebApp.Models.DTO;
 
 namespace APIWebApp.Controllers
 {
@@ -22,31 +25,47 @@ namespace APIWebApp.Controllers
 
         // GET: api/Gigs
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Gig>>> GetGigs()
+        public async Task<ActionResult<IEnumerable<GigDtoRead>>> GetGigs()
         {
-          if (_context.Gigs == null)
-          {
-              return NotFound();
-          }
-            return await _context.Gigs.ToListAsync();
+            var gigsDtoRead = new List<GigDtoRead>();  
+            var gigs = await _context.Gigs.ToListAsync();
+            foreach (var gig in gigs)
+            {
+                var artist = await _context.Artists.FindAsync(gig.Id);
+                gigsDtoRead.Add(
+                    new GigDtoRead()
+                    {
+                        Id = gig.Id,
+                        GigTitle = gig.GigTitle,
+                        PlaceNumbers = gig.PlaceNumbers,
+                        GigAdress = gig.GigAdress,
+                        GigDate = gig.GigDate,
+                        ArtistId = gig.ArtistId,
+                        Artist = artist!.Name
+                    });
+
+            }  
+            return gigsDtoRead;
         }
 
         // GET: api/Gigs/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Gig>> GetGig(int id)
+        public async Task<ActionResult<GigDtoRead>> GetGig(int id)
         {
-          if (_context.Gigs == null)
-          {
-              return NotFound();
-          }
             var gig = await _context.Gigs.FindAsync(id);
-
-            if (gig == null)
+            if (gig == null) return NotFound();
+            var artist = await _context.Artists.FindAsync(gig.ArtistId);
+            var gigDtoRead = new GigDtoRead
             {
-                return NotFound();
-            }
-
-            return gig;
+                Id = gig.Id,
+                GigTitle = gig.GigTitle,
+                PlaceNumbers = gig.PlaceNumbers,
+                GigAdress = gig.GigAdress,
+                GigDate = gig.GigDate,
+                ArtistId = gig.ArtistId,
+                Artist = artist!.Name
+            };
+            return gigDtoRead;
         }
 
         // PUT: api/Gigs/5
@@ -83,16 +102,26 @@ namespace APIWebApp.Controllers
         // POST: api/Gigs
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Gig>> PostGig(Gig gig)
+        public async Task<ActionResult<Gig>> PostGig(GigDtoWrite gigDtoWrite)
         {
-          if (_context.Gigs == null)
-          {
-              return Problem("Entity set 'APIContext.Gigs'  is null.");
-          }
+
+            var artist = await _context.Artists.FindAsync(gigDtoWrite.ArtistId);
+            if (artist is null) return NotFound("Bad artist id");
+
+            var gig = new Gig()
+            {
+                Artist = artist,
+                ArtistId = gigDtoWrite.ArtistId,
+                GigTitle = gigDtoWrite.GigTitle,
+                PlaceNumbers = gigDtoWrite.PlaceNumbers,
+                GigAdress = gigDtoWrite.GigAdress,
+                GigDate = gigDtoWrite.GigDate
+            };
+
             _context.Gigs.Add(gig);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetGig", new { id = gig.Id }, gig);
+            return RedirectToAction("GetGig", new { id = gig.Id });
         }
 
         // DELETE: api/Gigs/5
