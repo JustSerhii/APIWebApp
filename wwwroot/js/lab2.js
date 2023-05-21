@@ -49,16 +49,28 @@ function addGenre() {
 }
 
 function deleteGenre(id) {
-    const confirmDelete = confirm("Are you sure you want to delete this genre?");
-    if (!confirmDelete) {
-        return; // Cancel the deletion if the user clicks "Cancel"
-    }
+    const modal = document.getElementById('deleteModal');
+    modal.style.display = 'block';
 
-    fetch(`${uri}/${id}`, {
-        method: 'DELETE'
-    })
-        .then(() => getGenres())
-        .catch(error => document.getElementById('errorDB').innerHTML = error.toString());
+    const confirmButton = document.getElementById('confirmDelete');
+    const cancelButton = document.getElementById('cancelDelete');
+
+    confirmButton.onclick = function () {
+        modal.style.display = 'none';
+        performDelete(id);
+    };
+
+    cancelButton.onclick = function () {
+        modal.style.display = 'none';
+    };
+
+    function performDelete(id) {
+        fetch(`${uri}/${id}`, {
+            method: 'DELETE'
+        })
+            .then(() => getGenres())
+            .catch(error => document.getElementById('errorDB').innerHTML = error.toString());
+    }
 }
 
 function displayEditForm(id) {
