@@ -1,22 +1,36 @@
-﻿const uri = 'api/Genres'; // наше посилання за яким ми отримаємо список наших об'єктів
-let genres = []; // глобальна змінна для зберігання лекторів
+﻿const uri = 'api/Genres'; 
+let genres = []; 
 
 function getGenres() {
-    fetch(uri) // звертається до апі, щоб отримати усіх лекторів
+    fetch(uri) 
         .then(response => response.json())
         .then(data => _displayGenres(data))
-        .catch(error => console.error('Unable to get fair locations.', error));
+        .catch(error => console.error('Unable to get genres.', error));
 }
 
 function addGenre() {
-    // Отримує дані з інпутів за id 
     const addNameTextbox = document.getElementById('add-genreName');
+    const genreName = addNameTextbox.value.trim();
 
-    // створєю зміну лектора
+    if (genreName === '') {
+        window.alert('Genre name cannot be empty.');
+        return;
+    }
+
+    if (!isNaN(genreName)) {
+        window.alert('Genre name cannot be just a number.');
+        return;
+    }
+
+    // Check if the genre name already exists
+    if (genres.some(genre => genre.genreName === genreName)) {
+        window.alert('Genre name already exists.');
+        return;
+    }
+
     const genre = {
-        genreName: addNameTextbox.value.trim(),
+        genreName: genreName,
     };
-    // метод POST
     fetch(uri, {
         method: 'POST',
         headers: {
@@ -25,16 +39,16 @@ function addGenre() {
         },
         body: JSON.stringify(genre)
     })
-        then(response => response.json())
-        .then(() => {
-            getGenres();
+        .then(response => response.json())
+        .then(data => {
+            genres.push(data); // Add the new genre to the genres list
+            _displayGenres(genres); // Update the genre list display
             addNameTextbox.value = '';
         })
-        .catch(error => console.error('Unable to add fair location.', error));
+        .catch(error => console.error('Unable to add genre.', error));
 }
 
 function deleteGenre(id) {
-    // видаляє лектора за id і запитує зміни
     fetch(`${uri}/${id}`, {
         method: 'DELETE'
     })
@@ -43,12 +57,7 @@ function deleteGenre(id) {
 }
 
 function displayEditForm(id) {
-    // пошук за id лектора
     const genre = genres.find(genre => genre.id === id);
-    // вставляє дані в форми
-    // УВАГА УВАГА
-    // ТРЕБА ПИСАТИ genre.phone, а не genre.Phone як зазначено в классах, для перевірки, запустіть гет запрос
-    // і подивіться як він повертає (зазвичай, перша літера стає маленькою)
     document.getElementById('edit-id').value = genre.id;
     document.getElementById('edit-genrename').value = genre.genreName;
     document.getElementById('editForm').style.display = 'block';
@@ -56,14 +65,30 @@ function displayEditForm(id) {
 }
 
 function updateGenre() {
-    // метод PUT
-    const genreId = document.getElementById('edit-id').value; // бере ID
+    const genreId = document.getElementById('edit-id').value;
+    const genreName = document.getElementById('edit-genrename').value.trim();
+
+    if (genreName === '') {
+        window.alert('Genre name cannot be empty.');
+        return;
+    }
+
+    if (!isNaN(genreName)) {
+        window.alert('Genre name cannot be just a number.');
+        return;
+    }
+
+    // Check if the genre name already exists
+    if (genres.some(genre => genre.genreName === genreName && genre.id !== parseInt(genreId, 10))) {
+        window.alert('Genre name already exists.');
+        return;
+    }
+
     const genre = {
         id: parseInt(genreId, 10),
-        genreName: document.getElementById('edit-genrename').value.trim(), //string.trim() прибирає пробіли з кінців
-        // користувач вводить id організацій через кому, воно розпарсує цей string за допомогою string.split
-    }
-    //передає в контроллер
+        genreName: genreName,
+    };
+
     fetch(`${uri}/${genreId}`, {
         method: 'PUT',
         headers: {
@@ -73,58 +98,53 @@ function updateGenre() {
         body: JSON.stringify(genre)
     })
         .then(() => getGenres())
-        .catch(error => console.error('Unable to update fair location.', error));
+        .catch(error => console.error('Unable to update genre.', error));
+
     closeInput();
     return false;
 }
 
+
 function closeInput() {
-    // приховує елемент з редагуванням лектора
     document.getElementById('editForm').style.display = 'none';
 }
 
 
 function _displayGenres(data) {
-    const tBody = document.getElementById('genres');  // отримує тіло таблиці
+    const tBody = document.getElementById('genres'); 
     tBody.innerHTML = '';
 
 
-    const button = document.createElement('button'); // створює шаблон для кнопки
+    const button = document.createElement('button'); 
 
-    data.forEach(genre => {  // ітеруємо по лекторам
-        // створюємо унікальну кнопку РЕДАГУВАТИ для кожного лектора
+    data.forEach(genre => {  
         let editButton = button.cloneNode(false);
-        editButton.innerText = 'Редагувати';
-        // виклик функції на клік, що заповнює редагуючі поля
+        editButton.innerText = 'Edit';
+      
         editButton.setAttribute('onclick', `displayEditForm(${genre.id})`);
 
         let deleteButton = button.cloneNode(false);
-        deleteButton.innerText = 'Видалити';
-        // виклик функції видалення на клік
+        deleteButton.innerText = 'Delete';
+      
         deleteButton.setAttribute('onclick', `deleteGenre(${genre.id})`);
 
-        let tr = tBody.insertRow(); // вставляємо стрічку
-        // заповнюємо данними
-        //
-        // УВАГА УВАГА
-        // ТРЕБА ПИСАТИ genre.phone, а не genre.Phone як зазначено в классах, для перевірки, запустіть гет запрос
-        // і подивіться як він повертає (зазвичай, перша літера стає маленькою)
+        let tr = tBody.insertRow();
 
-        let td0 = tr.insertCell(0); //tr.InsertCell(int) вставляє в указану комірку (починаючи з 0) дані
+        let td0 = tr.insertCell(0); 
         let textNodeId = document.createTextNode(genre.id);
         td0.appendChild(textNodeId);
 
-        let td1 = tr.insertCell(1); // комірка залежить від вашого <th> в таблиці
+        let td1 = tr.insertCell(1); 
         let textNodeFullName = document.createTextNode(genre.genreName);
         td1.appendChild(textNodeFullName);
 
 
-        let td3 = tr.insertCell(2); //вставляємо кнопку редагування
+        let td3 = tr.insertCell(2); 
         td3.appendChild(editButton);
 
-        let td4 = tr.insertCell(3); // вставляємо кнопку видалення
+        let td4 = tr.insertCell(3);
         td4.appendChild(deleteButton);
     });
 
-    genres = data; // вносимо дані в змінну
+    genres = data; 
 }
