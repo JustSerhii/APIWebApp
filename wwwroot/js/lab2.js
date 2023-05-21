@@ -50,7 +50,7 @@ function displayEditForm(id) {
     // ТРЕБА ПИСАТИ genre.phone, а не genre.Phone як зазначено в классах, для перевірки, запустіть гет запрос
     // і подивіться як він повертає (зазвичай, перша літера стає маленькою)
     document.getElementById('edit-id').value = genre.id;
-    document.getElementById('edit-genreName').value = genre.genreName;
+    document.getElementById('edit-genrename').value = genre.genreName;
     document.getElementById('editForm').style.display = 'block';
 
 }
@@ -60,7 +60,7 @@ function updateGenre() {
     const genreId = document.getElementById('edit-id').value; // бере ID
     const genre = {
         id: parseInt(genreId, 10),
-        name: document.getElementById('edit-genreName').value.trim(), //string.trim() прибирає пробіли з кінців
+        genreName: document.getElementById('edit-genrename').value.trim(), //string.trim() прибирає пробіли з кінців
         // користувач вводить id організацій через кому, воно розпарсує цей string за допомогою string.split
     }
     //передає в контроллер

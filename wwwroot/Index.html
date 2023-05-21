@@ -23,12 +23,12 @@
     </form>
 
     <!-- форма для редагування -->
-    <div id="editGenre" style="display: none">
+    <div id="editGenre">
         <!-- display: none; приховує комірки при завантаженні -->
         <h3>Редагувати</h3>
         <form action="javascript:void(0);" onsubmit="updateGenre()">
-            <input type="hidden" id="edit-Id"> <!-- type=hidden бо користувач не може міняти id -->
-            <input type="text" id="edit-genreName" placeholder="Genre Name"> <!-- аналогічно формі додавання-->
+            <input type="hidden" id="edit-id"> <!-- type=hidden бо користувач не може міняти id -->
+            <input type="text" id="edit-genrename"> <!-- аналогічно формі додавання-->
             <input type="submit" value="Зберегти">
             <a onclick="closeInput()" aria-label="Close">&#10006;</a> <!-- кнопка для приховування редагування-->
         </form>
