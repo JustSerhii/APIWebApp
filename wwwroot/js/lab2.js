@@ -49,6 +49,11 @@ function addGenre() {
 }
 
 function deleteGenre(id) {
+    const confirmDelete = confirm("Are you sure you want to delete this genre?");
+    if (!confirmDelete) {
+        return; // Cancel the deletion if the user clicks "Cancel"
+    }
+
     fetch(`${uri}/${id}`, {
         method: 'DELETE'
     })
@@ -120,11 +125,13 @@ function _displayGenres(data) {
     data.forEach(genre => {  
         let editButton = button.cloneNode(false);
         editButton.innerText = 'Edit';
-      
+        editButton.classList.add('edit-button');
+
         editButton.setAttribute('onclick', `displayEditForm(${genre.id})`);
 
         let deleteButton = button.cloneNode(false);
         deleteButton.innerText = 'Delete';
+        deleteButton.classList.add('delete-button');
       
         deleteButton.setAttribute('onclick', `deleteGenre(${genre.id})`);
 

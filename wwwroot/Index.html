@@ -8,8 +8,79 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-</head>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
 
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+            width: 200px;
+        }
+
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+        .edit-button,
+        .delete-button {
+            padding: 5px 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            padding: 10px;
+        }
+
+        .edit-button:hover,
+        .delete-button:hover {
+        background-color: #45a049;
+        }
+
+
+        #errorDB {
+            color: red;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
 
 <body>
     <h1>Genres</h1>
@@ -17,7 +88,7 @@
     <p id="errorDB"></p>
     <h3>Add</h3>
     <form action="javascript:void(0);" method="POST" onsubmit="addGenre()">
-        
+
         <input type="text" id="add-genreName" placeholder="Genre Name">
         <input type="submit" value="Add">
     </form>
@@ -26,9 +97,9 @@
         <h3>Редагувати</h3>
         <form action="javascript:void(0);" onsubmit="updateGenre()">
             <input type="hidden" id="edit-id">
-            <input class="search-bar" type="text" id="edit-genrename"> 
+            <input class="search-bar" type="text" id="edit-genrename">
             <input type="submit" value="Save">
-            <!-- <a onclick="closeInput()" aria-label="Close">&#10006;</a> --> 
+            <!-- <a onclick="closeInput()" aria-label="Close">&#10006;</a> -->
         </form>
     </div>
 
@@ -38,7 +109,7 @@
         <tr>
             <th>ID</th>
             <th>Name</th>
-            <th></th> 
+            <th></th>
             <th></th>
         </tr>
         <tbody id="genres"></tbody>
@@ -46,7 +117,7 @@
 
     <script src="js/lab2.js" asp-append-version="true"></script>
     <script type="text/javascript">
-        getGenres(); 
+        getGenres();
     </script>
 
 </body>
