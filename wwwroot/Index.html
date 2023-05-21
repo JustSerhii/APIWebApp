@@ -18,7 +18,7 @@
             вказати id відповідно до вашого класу для зручного використання в джс,
             placeholder показує початкову вказівку, що треба вводити в комірку
         -->
-        <input type="text" id="add-genrename" placeholder="Genre Name">
+        <input type="text" id="add-genreName" placeholder="Genre Name">
         <input type="submit" value="Додати">
     </form>
 
@@ -28,7 +28,7 @@
         <h3>Редагувати</h3>
         <form action="javascript:void(0);" onsubmit="updateGenre()">
             <input type="hidden" id="edit-Id"> <!-- type=hidden бо користувач не може міняти id -->
-            <input type="text" id="edit-GenreName" placeholder="Genre Name"> <!-- аналогічно формі додавання-->
+            <input type="text" id="edit-genreName" placeholder="Genre Name"> <!-- аналогічно формі додавання-->
             <input type="submit" value="Зберегти">
             <a onclick="closeInput()" aria-label="Close">&#10006;</a> <!-- кнопка для приховування редагування-->
         </form>
@@ -49,5 +49,8 @@
 
     <script src="js/lab2.js" asp-append-version="true"></script> <!-- наш джс скрипт -->
     <script type="text/javascript">
-    getGenres(); // викликає для відображення лекторів
+        getGenres(); // викликає для відображення лекторів
     </script>
+
+</body>
+</html>

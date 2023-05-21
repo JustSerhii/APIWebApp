@@ -3,24 +3,18 @@ let genres = []; // глобальна змінна для зберігання 
 
 function getGenres() {
     fetch(uri) // звертається до апі, щоб отримати усіх лекторів
-        .then(response => {
-            if (!response.ok) { // перевіряє чи все ок з запросом
-                return response.text().then(text => { throw new Error(text) })
-            } // якщо ні, кидає експешн
-            document.getElementById('errorDB').innerHTML = "";
-            return response.json();
-        }) // повертає джсон
-        .then(data => _displayGenres(data))  // викликає функцію для виведення та збереження лекторів
-        .catch(error => document.getElementById('errorDB').innerHTML = error.toString());
+        .then(response => response.json())
+        .then(data => _displayGenres(data))
+        .catch(error => console.error('Unable to get fair locations.', error));
 }
 
 function addGenre() {
     // Отримує дані з інпутів за id 
-    const addNameTextbox = document.getElementById('add-genrename');
+    const addNameTextbox = document.getElementById('add-genreName');
 
     // створєю зміну лектора
     const genre = {
-        genrename: addNameTextbox.value.trim(),
+        genreName: addNameTextbox.value.trim(),
     };
     // метод POST
     fetch(uri, {
@@ -31,18 +25,12 @@ function addGenre() {
         },
         body: JSON.stringify(genre)
     })
-        .then(response => {
-            if (!response.ok) { // перевіряє чи все ок з запросом
-                return response.text().then(text => { throw new Error(text) })
-            } // якщо ні, кидає експешн
-            document.getElementById('errorDB').innerHTML = "";
-            return response.json();
-        }) // повертає джсон
+        then(response => response.json())
         .then(() => {
-            getGenres(); // отримує нових лекторів
-            addNameTextbox.value = ''; //очищає комірки інпутів
+            getGenres();
+            addNameTextbox.value = '';
         })
-        .catch(error => document.getElementById('errorDB').innerHTML = error.toString());
+        .catch(error => console.error('Unable to add fair location.', error));
 }
 
 function deleteGenre(id) {
@@ -61,16 +49,18 @@ function displayEditForm(id) {
     // УВАГА УВАГА
     // ТРЕБА ПИСАТИ genre.phone, а не genre.Phone як зазначено в классах, для перевірки, запустіть гет запрос
     // і подивіться як він повертає (зазвичай, перша літера стає маленькою)
-    document.getElementById('edit-Id').value = genre.id;
-    document.getElementById('edit-GenreName').value = genre.genrename;
+    document.getElementById('edit-id').value = genre.id;
+    document.getElementById('edit-genreName').value = genre.genreName;
+    document.getElementById('editForm').style.display = 'block';
+
 }
 
 function updateGenre() {
     // метод PUT
-    const genreId = document.getElementById('edit-Id').value; // бере ID
+    const genreId = document.getElementById('edit-id').value; // бере ID
     const genre = {
         id: parseInt(genreId, 10),
-        name: document.getElementById('edit-GenreName').value.trim(), //string.trim() прибирає пробіли з кінців
+        name: document.getElementById('edit-genreName').value.trim(), //string.trim() прибирає пробіли з кінців
         // користувач вводить id організацій через кому, воно розпарсує цей string за допомогою string.split
     }
     //передає в контроллер
@@ -82,26 +72,15 @@ function updateGenre() {
         },
         body: JSON.stringify(genre)
     })
-        .then(response => {
-            if (!response.ok) { // перевіряє чи запрос повернув помилку
-                return response.text().then(text => { throw new Error(text) })
-            } // якщо ні, кидає експешн
-            document.getElementById('errorDB').innerHTML = "";
-            return getGenres();
-        })
         .then(() => getGenres())
-        // запрос змін
-        .catch(error => document.getElementById('errorDB').innerHTML = error.toString());
-
-    closeInput(); // приховує поле змін
-
+        .catch(error => console.error('Unable to update fair location.', error));
+    closeInput();
     return false;
 }
 
 function closeInput() {
     // приховує елемент з редагуванням лектора
-    document.getElementById('editGenre').style.display = 'none';
-    document.getElementById('errorDB').innerHTML = '';
+    document.getElementById('editForm').style.display = 'none';
 }
 
 
@@ -136,7 +115,7 @@ function _displayGenres(data) {
         td0.appendChild(textNodeId);
 
         let td1 = tr.insertCell(1); // комірка залежить від вашого <th> в таблиці
-        let textNodeFullName = document.createTextNode(genre.genrename);
+        let textNodeFullName = document.createTextNode(genre.genreName);
         td1.appendChild(textNodeFullName);
 
 
